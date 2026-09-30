@@ -1,50 +1,42 @@
-import { AGENTS, ClippyProvider } from "@react95/clippy";
+import { useEffect } from "react";
 import { setAuth } from "./hooks/auth";
 import Login from "./components/Login";
-import DesktopIcon from "./components/DesktopIcon";
-import { Amovie2, Bookmark, Inetcpl1313, Mail, MediaAudio } from "@react95/icons";
-import { Video } from "@react95/core";
-import WindowBar from "./components/WindowBar";
-import Biography from "./components/Biography";
-import Contact from "./components/Contact";
+import WindowManager from "./components/WindowManager";
+import Desktop from "./os/components/Desktop";
+import Taskbar from "./os/components/Taskbar";
+import ContextMenuHost from "./os/components/ContextMenuHost";
+import WelcomeDialog from "./os/components/WelcomeDialog";
+import { useDisplaySettings } from "./os/store/settings";
+import { useShell } from "./os/store/shell";
+import { applyScheme } from "./os/schemes";
+import { asset } from "./utils/asset";
 
 function App() {
-  const authenticated = setAuth((state)=>state.authenticated);
-  return (
-    <div style={{width:"100%",background:"#098684",minHeight:"100vh",position:"relative"}}>
-      {/* Display login page if the user is unauthenticated */}
-      <img src="logo.png" width={400} style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}} />
+  const authenticated = setAuth((state) => state.authenticated);
+  const welcomeOpen = useShell((s) => s.welcomeOpen);
+  const schemeId = useDisplaySettings((s) => s.schemeId);
 
-      {/* Display desktop portfolio if the user is authenticated */}
-      {!authenticated && <Login/>}
-      {
-        authenticated && (
-          <ClippyProvider agentName={AGENTS.BONZI}>
-            <div className="fixed">
-              {/* Desktop Icons */}
-              <DesktopIcon icon={<Amovie2/>} name="PianoCat.mp4">
-                <Video w={"420px"} src="keyboardcat.mp4" name="Keyboard Cat"/>
-              </DesktopIcon>
-              <DesktopIcon icon={<Inetcpl1313/>} name="Browser">
-                <iframe title="browser" src="https://swisscows.com" style={{border:"none", width:"800px", height:"500px"}}/>
-              </DesktopIcon>
-              <DesktopIcon icon={<Bookmark variant="32x32_4"/>} name="Biography">
-                <Biography/>
-              </DesktopIcon>
-              <DesktopIcon icon={<MediaAudio variant="32x32_4"/>} name="Music Player">
-                <iframe title="browser" src="https://open.spotify.com/embed/track/3BeRfdDva5tTPCHPYBaGlA" style={{border:"none", width:"800px", height:"352px"}}/>
-                <iframe title="browser" src="https://open.spotify.com/embed/track/0BISTkoIhYq46qtRRVjLvn" style={{border:"none", width:"800px", height:"352px"}}/>
-              </DesktopIcon>
-              <DesktopIcon icon={<Mail/>} name="Contact">
-                <Contact/>
-              </DesktopIcon>
-            </div>
-            <WindowBar/>
-          </ClippyProvider>
-        )
-      }
-    </div>
-  )
+  // The window color scheme restyles everything, the login dialog included
+  useEffect(() => applyScheme(schemeId), [schemeId]);
+
+  if (!authenticated) {
+    return (
+      <div className="fixed inset-0 bg-desktop">
+        <img src={asset("logo.png")} alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-100 max-w-[80vw]" />
+        <Login />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <Desktop />
+      <WindowManager />
+      <Taskbar />
+      <ContextMenuHost />
+      {welcomeOpen && <WelcomeDialog />}
+    </>
+  );
 }
 
 export default App

@@ -1,0 +1,264 @@
+/*-------------------------------------------*\
+    Shared app chrome
+    Plain CSS for now; new OS-level UI uses Tailwind (src/os/)
+\*-------------------------------------------*/
+
+/* Tailwind's Preflight strips list bullets and heading styles; document-like content wants them back */
+.word-page ul, .aim-profile ul, .oe-preview-body ul { list-style: disc; }
+.oe-preview-body ul { padding-left: 22px; }
+.word-page h1, .word-page h2, .aim-profile h2, .aim-profile h3, .mp-info h2 { font-weight: bold; }
+
+.app {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: var(--color-win-face);
+  font-size: 13px;
+  user-select: none;
+}
+
+.raised {
+  background: var(--color-win-face);
+  box-shadow: inset -1px -1px var(--color-win-dark), inset 1px 1px var(--color-win-light), inset -2px -2px var(--color-win-shadow), inset 2px 2px var(--color-win-highlight);
+}
+
+.sunken {
+  background: #fff;
+  box-shadow: inset -1px -1px var(--color-win-highlight), inset 1px 1px var(--color-win-shadow), inset -2px -2px var(--color-win-light), inset 2px 2px var(--color-win-dark);
+}
+
+/* Menu bar */
+.menubar { display: flex; flex-wrap: wrap; padding: 1px 2px; flex-shrink: 0; }
+.menubar-item { position: relative; padding: 2px 7px; cursor: default; }
+.menubar-item.open { background: var(--color-win-select); color: var(--color-win-select-text); }
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1px;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--color-win-highlight);
+  border-bottom: 1px solid var(--color-win-shadow);
+}
+.tb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 23px;
+  height: 22px;
+  padding: 2px 3px;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+}
+.tb-btn.labeled { flex-direction: column; height: auto; min-width: 58px; padding: 3px 6px; font-size: 12px; }
+.tb-btn:not(:disabled):hover { box-shadow: inset -1px -1px var(--color-win-shadow), inset 1px 1px var(--color-win-highlight); }
+.tb-btn:not(:disabled):active { box-shadow: inset 1px 1px var(--color-win-shadow), inset -1px -1px var(--color-win-highlight); }
+.tb-btn:disabled { color: var(--color-win-shadow); }
+.tb-btn:disabled svg { filter: grayscale(1); opacity: 0.45; }
+.tb-sep { width: 0; height: 20px; margin: 0 3px; border-left: 1px solid var(--color-win-shadow); border-right: 1px solid var(--color-win-highlight); }
+
+/* Status bar */
+.statusbar { display: flex; gap: 2px; padding: 2px; flex-shrink: 0; font-size: 12px; }
+.status-cell {
+  padding: 1px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: inset 1px 1px var(--color-win-shadow), inset -1px -1px var(--color-win-highlight);
+}
+.status-cell.grow { flex: 1; }
+.status-cell .dim { color: var(--color-win-shadow); }
+
+/* Selectable list rows (playlist, message list, folder list) */
+.list-row { cursor: default; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-row.selected { background: var(--color-win-select); color: var(--color-win-select-text); }
+
+/*-------------------------------------------*\
+    Word 95
+\*-------------------------------------------*/
+
+.word-zoom { width: 104px; margin-left: 4px; }
+.word-fake-select {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 4px;
+  margin-right: 4px;
+  font-size: 12px;
+  overflow: hidden;
+}
+.word-ruler-row { flex-shrink: 0; overflow: hidden; background: var(--color-win-face); border-bottom: 1px solid var(--color-win-shadow); }
+/* Tick marks are set inline so they follow the zoom level */
+.word-ruler { height: 16px; margin: 2px auto; position: relative; font-size: 9px; }
+.word-ruler span { position: absolute; top: 0; transform: translateX(-50%); }
+.word-workspace { flex: 1; min-height: 0; overflow: auto; background: var(--color-win-shadow); padding: 16px; }
+.word-page {
+  width: 816px;
+  min-height: 1056px;
+  margin: 0 auto;
+  padding: 64px 72px;
+  box-sizing: border-box;
+  background: #fff;
+  color: #000;
+  box-shadow: 3px 3px 0 #000;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14.5px;
+  line-height: 1.35;
+  user-select: text;
+}
+.word-page h1 { margin: 0; text-align: center; font-size: 26px; }
+.word-page .contact { margin: 2px 0 18px; text-align: center; font-size: 13.5px; }
+.word-page .contact a { color: #000080; }
+.word-page h2 { margin: 16px 0 2px; font-size: 15px; letter-spacing: 0.5px; border-bottom: 1px solid #000; }
+.word-page .entry-head { display: flex; justify-content: space-between; gap: 16px; }
+.word-page ul { margin: 2px 0 8px; padding-left: 26px; }
+.word-page li { margin: 1px 0; }
+.word-page .small-caps { font-variant: small-caps; }
+.word-page .skills-table { border-collapse: collapse; margin-top: 4px; }
+.word-page .skills-table th { text-align: left; vertical-align: top; padding: 1px 20px 1px 0; white-space: nowrap; }
+.word-page .skills-table td { padding: 1px 0; }
+
+/*-------------------------------------------*\
+    Media Player
+\*-------------------------------------------*/
+
+.mp-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 170px 1fr; gap: 4px; padding: 4px; }
+.mp.compact .mp-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+.mp-playlist { overflow: auto; padding: 2px; outline: none; }
+.mp.compact .mp-playlist { max-height: 76px; }
+.mp-playlist-title { padding: 2px 4px; margin-bottom: 2px; font-weight: bold; border-bottom: 1px solid var(--color-win-face); }
+.mp-track { padding: 2px 4px; }
+.mp-playlist:focus .mp-track.selected { outline: 1px dotted #fff; outline-offset: -2px; }
+.mp-main { display: flex; flex-direction: column; gap: 4px; min-height: 0; min-width: 0; }
+.mp-stage {
+  flex: 1 1 55%;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 1px 1px var(--color-win-shadow), inset -1px -1px var(--color-win-highlight);
+}
+.mp-stage img, .mp-stage video { width: 100%; height: 100%; object-fit: contain; }
+.mp-novis { color: #0f0; font-size: 13px; }
+.mp-transport { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+.mp-btn {
+  width: 28px;
+  height: 22px;
+  padding: 0;
+  font: 11px/1 "MS Sans Serif", sans-serif;
+  background: var(--color-win-face);
+  border: none;
+  box-shadow: inset -1px -1px var(--color-win-dark), inset 1px 1px var(--color-win-highlight), inset -2px -2px var(--color-win-shadow), inset 2px 2px var(--color-win-light);
+}
+.mp-btn:active { box-shadow: inset 1px 1px var(--color-win-dark), inset -1px -1px var(--color-win-highlight), inset 2px 2px var(--color-win-shadow), inset -2px -2px var(--color-win-light); }
+.mp-seek { flex: 1; min-width: 60px; }
+.mp-time { padding: 2px 6px; font-size: 12px; white-space: nowrap; }
+.mp-info { flex: 1 1 45%; min-height: 0; overflow: auto; padding: 8px 12px; user-select: text; }
+.mp-info h2 { margin: 0 0 2px; font-size: 18px; }
+.mp-info p { margin: 0 0 8px; }
+.mp-info .mp-summary { font-style: italic; color: #404040; }
+
+/*-------------------------------------------*\
+    AIM
+\*-------------------------------------------*/
+
+.aim-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px;
+  flex-shrink: 0;
+  color: #fff;
+  background: linear-gradient(to right, #000080, #1084d0);
+}
+.aim-logo {
+  padding: 0 6px;
+  font: italic bold 20px/1.1 var(--font-win);
+  color: #000080;
+  background: #ffd200;
+  border: 1px solid #000;
+}
+.aim-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 170px 1fr; gap: 4px; padding: 4px; }
+.aim-side { display: flex; flex-direction: column; gap: 4px; min-height: 0; }
+.aim-buddylist { flex: 1; overflow: auto; padding: 3px; }
+.aim-group { padding: 2px 2px; font-weight: bold; cursor: default; }
+.aim-buddy { padding: 1px 4px 1px 20px; font-weight: bold; color: #000080; }
+.aim-buddy.selected { color: #fff; }
+.aim-actions { display: flex; gap: 3px; }
+.aim-actions button { flex: 1; min-width: 0; padding-inline: 2px; }
+.aim-profile { overflow: auto; padding: 10px 14px; user-select: text; font-size: 13px; }
+.aim-profile h2 { margin: 12px 0 0; font-size: 18px; color: #000080; }
+.aim-profile h3 { margin: 14px 0 4px; font-size: 14px; color: #c00000; border-bottom: 1px solid #c0c0c0; }
+.aim-profile p { margin: 4px 0; }
+.aim-profile ul { margin: 2px 0 6px; padding-left: 22px; }
+.aim-profile .dim { color: #808080; }
+.aim-tagline { font-style: italic; color: #404040; }
+.aim-card { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+.aim-photo { width: 110px; height: 110px; object-fit: cover; border: 2px solid #000080; }
+.aim-facts th { text-align: left; padding-right: 8px; color: #000080; white-space: nowrap; }
+.aim-facts td, .aim-facts th { padding-block: 1px; vertical-align: top; }
+.aim-away { margin-top: 10px; padding: 6px 10px; background: #ffffe1; border: 1px solid #000; }
+.aim-away p { margin: 4px 0 0; }
+.aim-job-head { cursor: pointer; padding: 2px 0; }
+.aim-job-head:hover { color: #000080; text-decoration: underline; }
+@media (max-width: 560px) {
+  .aim-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .aim-buddylist { max-height: 110px; }
+}
+
+/*-------------------------------------------*\
+    Outlook Express, Compose, Address Book
+\*-------------------------------------------*/
+
+.oe-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 170px 1fr; gap: 4px; padding: 4px; }
+.oe-folders { overflow: auto; padding: 3px; }
+.oe-folder-root { display: flex; align-items: center; gap: 4px; padding: 2px; }
+.oe-folder { display: flex; align-items: center; gap: 4px; padding: 2px 4px 2px 24px; }
+.oe-main { display: grid; grid-template-rows: minmax(90px, 40%) 1fr; gap: 4px; min-height: 0; min-width: 0; }
+.oe-list, .ab-list { overflow: auto; }
+.oe-row { display: grid; grid-template-columns: 150px 1fr 150px; }
+.oe-row > span { padding: 2px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.oe-row > span:first-child { display: flex; align-items: center; gap: 4px; }
+.oe-row.unread { font-weight: bold; }
+.oe-head { position: sticky; top: 0; z-index: 1; background: var(--color-win-face); }
+.oe-head > span { box-shadow: inset -1px -1px var(--color-win-shadow), inset 1px 1px var(--color-win-highlight); padding: 2px 6px; }
+.oe-preview { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.oe-preview-head { padding: 6px 10px; background: var(--color-win-face); border-bottom: 1px solid var(--color-win-shadow); user-select: text; }
+.oe-preview-body { flex: 1; overflow: auto; padding: 8px 12px; user-select: text; }
+.oe-preview-body p { margin: 0 0 8px; }
+.oe-preview-body ul { margin: 0 0 8px; }
+.oe-empty { padding: 16px; text-align: center; color: var(--color-win-shadow); }
+@media (max-width: 700px) {
+  .oe-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .oe-folders { max-height: 90px; }
+  .oe-row { grid-template-columns: 110px 1fr 0; }
+}
+
+.compose-form { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; padding: 6px; }
+.compose-fields { display: grid; grid-template-columns: 60px 1fr; align-items: center; gap: 4px; }
+.compose-fields label { text-align: right; }
+.compose-to { min-height: 20px; padding: 2px 4px; }
+.compose-chip { text-decoration: underline; }
+.compose-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.compose-body { flex: 1; min-height: 120px; resize: none; font-family: inherit; }
+
+.ab-list { flex: 1; min-height: 0; margin: 4px; }
+.ab-row { display: grid; grid-template-columns: 1fr 1fr; }
+.ab-row > span { padding: 2px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/*-------------------------------------------*\
+    Winamp (Webamp)
+\*-------------------------------------------*/
+
+/* The layer spans the screen but only Webamp's own windows take clicks. #webamp itself is
+   zero-sized with absolutely positioned windows, so empty areas stay click-through to the desktop. */
+.winamp-layer #webamp { pointer-events: auto; }
