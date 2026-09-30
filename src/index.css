@@ -1,84 +1,5 @@
-*{
-    user-select: none;
-}
-/* === Display === */
-.hidden               { display: none; }
-.block                { display: block; }
-.inline-block         { display: inline-block; }
-.inline               { display: inline; }
-.flex                 { display: flex; }
-.inline-flex          { display: inline-flex; }
-.grid                 { display: grid; }
-.inline-grid          { display: inline-grid; }
-.contents             { display: contents; }
-.table                { display: table; }
+@import "tailwindcss";
 
-/* === Position === */
-.static               { position: static; }
-.relative             { position: relative; }
-.absolute             { position: absolute; }
-.fixed                { position: fixed; }
-.sticky               { position: sticky; }
-
-/* === Top / Right / Bottom / Left === */
-.top-0                { top: 0px; }
-.right-0              { right: 0px; }
-.bottom-0             { bottom: 0px; }
-.left-0               { left: 0px; }
-
-.inset-0              { top: 0; right: 0; bottom: 0; left: 0; }
-.inset-x-0            { left: 0; right: 0; }
-.inset-y-0            { top: 0; bottom: 0; }
-
-.top-half              { top: 50% !important; }
-.left-half          { left: 50% !important; }
-
-.-translate-x-half     { transform: translateX(-50%) !important; }
-.-translate-y-half     { transform: translateY(-50%) !important; }
-.translate  {translate: -50%;}
-.translate-x-full     { transform: translateX(100%); }
-.translate-y-full     { transform: translateY(100%); }
-
-/* === Z-Index === */
-.z-0                  { z-index: 0; }
-.z-10                 { z-index: 10; }
-.z-20                 { z-index: 20; }
-.z-30                 { z-index: 30; }
-.z-40                 { z-index: 40; }
-.z-50                 { z-index: 50; }
-.z-auto               { z-index: auto; }
-
-/* === Flex Utilities (for layout) === */
-.flex-row             { flex-direction: row; }
-.flex-col             { flex-direction: column; }
-.items-center         { align-items: center; }
-.justify-center       { justify-content: center; }
-.justify-between      { justify-content: space-between; }
-.justify-around       { justify-content: space-around; }
-.justify-end          { justify-content: flex-end; }
-
-/* === Align (vertical alignment for inline elements) === */
-.align-top            { vertical-align: top; }
-.align-middle         { vertical-align: middle; }
-.align-bottom         { vertical-align: bottom; }
-
-
-.gap-0                { gap: 0px; }
-.gap-1                { gap: 0.25rem; /* 4px */ }
-.gap-2                { gap: 0.5rem;  /* 8px */ }
-.gap-3                { gap: 0.75rem; /* 12px */ }
-.gap-4                { gap: 1rem;    /* 16px */ }
-.gap-6                { gap: 1.5rem;  /* 24px */ }
-.gap-8                { gap: 2rem;    /* 32px */ }
-.gap-10               { gap: 2.5rem;  /* 40px */ }
-
-.gap-x-4              { column-gap: 1rem; }
-.gap-y-4              { row-gap: 1rem; }
-
-/* Biography Skills List */
-.resume-skills { line-height: 1.5; }
-
-/* Font Style and Format */
 @font-face {
   font-family: "MS Sans Serif";
   src: url("./assets/fonts/MS-Sans-Serif.ttf") format('truetype');
@@ -87,9 +8,146 @@
 }
 
 /*-------------------------------------------*\
-    Utilities
+    Windows 95 design tokens
+    Used as Tailwind colors, e.g. bg-win-face, text-win-shadow, from-win-title.
+    Color schemes (src/os/schemes.ts) override these variables at runtime, so every
+    Win95 surface must use them rather than hard-coded hex. "static" keeps them all emitted.
 \*-------------------------------------------*/
 
-body {
-  font-family: "MS Sans Serif", sans-serif;
+@theme static {
+  --font-win: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, sans-serif;
+
+  --color-win-face: #c0c0c0;
+  --color-win-light: #dfdfdf;
+  --color-win-highlight: #ffffff;
+  --color-win-shadow: #808080;
+  --color-win-dark: #000000;
+  --color-win-text: #000000;
+  --color-win-select: #000080;
+  --color-win-select-text: #ffffff;
+  --color-win-title: #000080;
+  --color-win-title-2: #1084d0;
+  --color-win-title-text: #ffffff;
+  --color-win-title-inactive: #808080;
+  --color-win-title-inactive-2: #808080;
+  --color-win-title-inactive-text: #dfdfdf;
+  --color-win-tooltip: #ffffe1;
+  --color-desktop: #008080;
+}
+
+/*-------------------------------------------*\
+    Bevels: the four 3D borders every Win95 surface is made of
+\*-------------------------------------------*/
+
+/* Windows, dialogs, menus, tab panels */
+@utility bevel-raised {
+  box-shadow: inset -1px -1px var(--color-win-dark), inset 1px 1px var(--color-win-light), inset -2px -2px var(--color-win-shadow), inset 2px 2px var(--color-win-highlight);
+}
+
+/* Buttons at rest */
+@utility bevel-button {
+  box-shadow: inset -1px -1px var(--color-win-dark), inset 1px 1px var(--color-win-highlight), inset -2px -2px var(--color-win-shadow), inset 2px 2px var(--color-win-light);
+}
+
+/* Buttons held down, pressed taskbar buttons */
+@utility bevel-pressed {
+  box-shadow: inset -1px -1px var(--color-win-highlight), inset 1px 1px var(--color-win-dark), inset -2px -2px var(--color-win-light), inset 2px 2px var(--color-win-shadow);
+}
+
+/* Text fields, list boxes, previews */
+@utility bevel-sunken {
+  box-shadow: inset -1px -1px var(--color-win-highlight), inset 1px 1px var(--color-win-shadow), inset -2px -2px var(--color-win-light), inset 2px 2px var(--color-win-dark);
+}
+
+/* Thin 1px inset: status bar cells, the taskbar tray */
+@utility bevel-status {
+  box-shadow: inset -1px -1px var(--color-win-highlight), inset 1px 1px var(--color-win-shadow);
+}
+
+/* The 50% dither Win95 drew on pressed taskbar buttons */
+@utility bg-dither {
+  background-image: repeating-conic-gradient(var(--color-win-highlight) 0 25%, var(--color-win-face) 0 50%);
+  background-size: 2px 2px;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-win);
+    font-size: 13px;
+    color: var(--color-win-text);
+    /* Desktop chrome isn't selectable; window contents opt back in (.window-body) */
+    user-select: none;
+    overflow: hidden;
+  }
+  a { color: #0000ee; text-decoration: underline; }
+}
+
+.window-body, .selectable { user-select: text; }
+
+/* While a window is dragged or resized, iframes must not swallow the pointer */
+body.os-interacting iframe { pointer-events: none; }
+body.os-interacting { cursor: inherit; }
+
+/*-------------------------------------------*\
+    Form controls that need pseudo-elements
+\*-------------------------------------------*/
+
+.win-slider {
+  appearance: none;
+  height: 21px;
+  background: transparent;
+}
+.win-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  box-shadow: inset -1px -1px var(--color-win-highlight), inset 1px 1px var(--color-win-shadow), inset -2px -2px var(--color-win-light), inset 2px 2px var(--color-win-dark);
+  background: var(--color-win-face);
+}
+.win-slider::-moz-range-track {
+  height: 4px;
+  box-shadow: inset -1px -1px var(--color-win-highlight), inset 1px 1px var(--color-win-shadow), inset -2px -2px var(--color-win-light), inset 2px 2px var(--color-win-dark);
+  background: var(--color-win-face);
+}
+.win-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 11px;
+  height: 21px;
+  margin-top: -9px;
+  background: var(--color-win-face);
+  box-shadow: inset -1px -1px var(--color-win-dark), inset 1px 1px var(--color-win-highlight), inset -2px -2px var(--color-win-shadow), inset 2px 2px var(--color-win-light);
+}
+.win-slider::-moz-range-thumb {
+  width: 11px;
+  height: 21px;
+  border: none;
+  border-radius: 0;
+  background: var(--color-win-face);
+  box-shadow: inset -1px -1px var(--color-win-dark), inset 1px 1px var(--color-win-highlight), inset -2px -2px var(--color-win-shadow), inset 2px 2px var(--color-win-light);
+}
+
+/* Check boxes and radio buttons keep a white well, as in every Win95 color scheme */
+.win-radio, .win-checkbox {
+  appearance: none;
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  background: #fff;
+  box-shadow: inset -1px -1px var(--color-win-highlight), inset 1px 1px var(--color-win-shadow), inset -2px -2px var(--color-win-light), inset 2px 2px var(--color-win-dark);
+}
+.win-radio { border-radius: 50%; }
+.win-radio:checked { background: radial-gradient(circle, #000 0 2px, #fff 2.5px); }
+.win-checkbox:checked {
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' shape-rendering='crispEdges'%3E%3Cpath d='M1 3h1v1h1v1h1V4h1V3h1V2h1v2H6v1H5v1H4v1H3V6H2V5H1z'/%3E%3C/svg%3E") center no-repeat;
+}
+.win-radio:focus-visible + span, .win-checkbox:focus-visible + span { outline: 1px dotted currentColor; }
+
+/*-------------------------------------------*\
+    Shared content styles
+\*-------------------------------------------*/
+
+.tech-tag {
+  background: #ffffff;
+  border: 1px solid #808080;
+  font-size: 12px;
+  padding: 2px 6px;
 }

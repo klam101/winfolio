@@ -1,69 +1,45 @@
-# React + TypeScript + Vite
+# Winfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Kevin Lam's portfolio, built as a Windows 95 desktop. Log in, then open programs from the desktop or the Start menu:
 
-Currently, two official plugins are available:
+- **Resume.doc**: my resume as a Microsoft Word 95 document (File > Save As PDF downloads the real thing)
+- **Projects**: my projects, playing in Windows Media Player
+- **About Me**: my AIM buddy profile
+- **Mail**: Outlook Express; Compose sends me a real email
+- **Winamp**: the classic player, via [Webamp](https://webamp.org)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Windows drag and resize from any edge. Right-click the desktop for Display Properties (wallpapers and color schemes), and drag icons wherever you like.
 
-## Expanding the ESLint configuration
+## Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+React 19, TypeScript, Vite and Tailwind CSS v4, with state in zustand. The desktop, window manager, taskbar, Start menu and controls are built from scratch in `src/os/`. Icons come from [@react95/icons](https://github.com/React95/React95).
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Running locally
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # dev server
+npm run build    # type-check and production build into dist/
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Deploying
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The site is hosted on [Vercel](https://vercel.com). Every push to `main` deploys to production, and other branches get preview links.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Optional environment variable (set it in `.env.local` for local builds, and in Vercel's project settings for the live site):
+
+- `VITE_FORMSPREE_ID`: the [Formspree](https://formspree.io) form ID that the Compose window sends to. Without it, Compose falls back to opening the visitor's email app.
+
+## Editing content
+
+| What | Where |
+| --- | --- |
+| Resume (web version) | `src/data/resume.ts`; the downloadable PDF is `public/resume.pdf` |
+| Projects | `src/data/projects.ts`; screenshots go in `public/projects/` |
+| About Me and the welcome dialog | `src/data/about.ts` |
+| Inbox messages | `src/data/mail.ts` |
+| Your own songs for Winamp | drop MP3s in `src/assets/music/` (see the README there) |
+| Wallpapers and color schemes | `src/os/wallpapers.ts`, `src/os/schemes.ts` |
+
+Planned work and ideas live in [TASKS.md](TASKS.md).

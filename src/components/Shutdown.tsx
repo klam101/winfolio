@@ -1,64 +1,60 @@
-import React, { type ComponentType } from 'react'
-import { Button, Fieldset, Modal, RadioButton, TitleBar } from '@react95/core';
-import { setAuth } from '../hooks/auth';
+import { useState } from 'react'
 import { Computer3 } from '@react95/icons';
+import { setAuth } from '../hooks/auth';
+import { useWindows } from '../os/store/windows';
+import { useShell } from '../os/store/shell';
+import Dialog from '../os/ui/Dialog';
+import { Button, Radio } from '../os/ui/controls';
 
-type ShutdownOptions = "shutdown" | "restart" | "restart-incompatible";
+type ShutdownOption = "shutdown" | "restart" | "restart-dos";
 
-interface ShutdownProps {
-    close: ()=>void;
-}
+const OPTIONS: { value: ShutdownOption; label: string }[] = [
+    { value: "shutdown", label: "Shut down the computer?" },
+    { value: "restart", label: "Restart the computer?" },
+    { value: "restart-dos", label: "Restart the computer in MS-DOS mode?" },
+];
 
-function Shutdown({close}: ShutdownProps) {
-    const [selectedOption, setSelectedOption] = React.useState<ShutdownOptions>("shutdown");
-    const logout = setAuth((state)=>state.logout);
+function Shutdown({ close }: { close: () => void }) {
+    const [selected, setSelected] = useState<ShutdownOption>("shutdown");
+    const logout = setAuth((state) => state.logout);
+    const closeAll = useWindows((state) => state.closeAll);
+    const setWelcomeOpen = useShell((state) => state.setWelcomeOpen);
 
-    function handleConfirm() {
-        if (selectedOption === "shutdown") {
+    function confirm() {
+        if (selected === "shutdown") {
+            closeAll();
+            // The next login is greeted again
+            setWelcomeOpen(true);
             logout();
-            close();
         }
-        else {
-            close();
-        }
+        close();
     }
 
     return (
-        <div>
-            <SafeModal icon={<Computer3 variant='32x32_4'/>} title={"Shut Down Windows"} style={{left:"50%", top:"50%", transform:"translate(-50%,-50%)"}} titleBarOptions={[<TitleBar.Close key={"close"} onClick={close}/>]}>
-                <Modal.Content width={"400px"} height={"200px"} boxShadow="$in" style={{display:"flex", flexDirection:"column", justifyContent:"space-between", padding:"10px"}}>
-                    <div style={{display:"flex", gap:"10px"}}>
-                        <div className="flex items-start">
-                            <Computer3 variant='32x32_4' style={{marginRight:"1rem"}}/>
-                            <div style={{flexGrow:"1"}}>
-                                <p style={{marginTop:"0"}}>What do you want the computer to do?</p>
-                                <RadioButton name="Shutdown" value={"shutdown"} checked={selectedOption==="shutdown"} onChange={()=>setSelectedOption("shutdown")}>
-                                    Shut down the computer?
-                                </RadioButton>
-                                <RadioButton name="Shutdown" value={"restart"} checked={selectedOption==="restart"} onChange={()=>setSelectedOption("restart")}>
-                                    Restart the computer?
-                                </RadioButton>
-                                <RadioButton name="Shutdown" value={"restart-incompatible"} checked={selectedOption==="restart-incompatible"} onChange={()=>setSelectedOption("restart-incompatible")}>
-                                    Restart the computer in MS-DOS mode?
-                                </RadioButton>
-                            </div>
-                        </div>
-                    </div>
-                    <Fieldset style={{padding:".5rem", margin:".5rem"}}>
-                        <div className="flex items-center justify-center gap-2">
-                            <Button onClick={handleConfirm} style={{width:"90px"}}>YES</Button>
-                            <Button onClick={close} style={{width:"90px"}}>NO</Button>
-                            <Button style={{width:"90px"}}>HELP</Button>
-                        </div>
-                    </Fieldset>
-                </Modal.Content>
-
-            </SafeModal>
-        </div>
+        <Dialog title="Shut Down Windows" onClose={close} className="w-[min(400px,calc(100vw-16px))]">
+            <div className="flex gap-3.5 p-1">
+                <Computer3 variant="32x32_4" className="shrink-0" />
+                <div className="flex flex-col gap-1.5">
+                    <p className="mb-1">Are you sure you want to:</p>
+                    {OPTIONS.map((option) => (
+                        <Radio
+                            key={option.value}
+                            name="shutdown"
+                            checked={selected === option.value}
+                            onChange={() => setSelected(option.value)}
+                        >
+                            {option.label}
+                        </Radio>
+                    ))}
+                </div>
+            </div>
+            <div className="flex justify-center gap-1.5 mt-3">
+                <Button primary onClick={confirm}>Yes</Button>
+                <Button onClick={close}>No</Button>
+                <Button disabled>Help</Button>
+            </div>
+        </Dialog>
     )
 }
 
 export default Shutdown
-
-//eslint-disable-next-line
-const SafeModal = Modal as unknown as ComponentType<any>;

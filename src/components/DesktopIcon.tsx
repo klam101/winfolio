@@ -1,126 +1,57 @@
-import React, { type ComponentType, type ReactElement, type ReactNode } from 'react'
-import { useWindows } from '../hooks/windows';
-import { Modal, TitleBar, useModal } from '@react95/core';
+import { type CSSProperties, type MouseEvent, type PointerEvent, type ReactNode } from 'react'
+import { cx } from '../os/ui/cx'
 
-// Centralized style objects for maintainability and clarity
-const styles = {
-  desktopIcon: {
-    alignItems: "center",
-    cursor: "pointer",
-    display: "flex",
-    flexDirection: "column",
-    padding: "10px",
-    borderRadius: "8px",
-    textAlign: "center",
-    width: "100px",
-    gap: "10px",
-  },
-  iconImage: {
-    height: "64px",
-    marginBottom: "8px",
-    width: "64px",
-  },
-  iconName: {
-    color: "#ffffff",
-    fontSize: "14px",
-    margin: "0",
-    textShadow: "1px 1px 3px rgba(0, 0, 0, 0.7)",
-    userSelect: "none",
-  },
-  window: {
-    background: "#ffffff",
-    borderRadius: "8px",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
-    display: "flex",
-    flexDirection: "column",
-  },
-  titleBar: {
-    alignItems: "center",
-    background: "#f0f0f0",
-    borderTopLeftRadius: "8px",
-    borderTopRightRadius: "8px",
-    cursor: "move",
-    display: "flex",
-    fontWeight: "bold",
-    justifyContent: "space-between",
-    padding: "8px",
-  },
-  closeButton: {
-    alignItems: "center",
-    background: "#ff5f56",
-    border: "1px solid #e04440",
-    borderRadius: "50%",
-    color: "#9a0000",
-    cursor: "pointer",
-    display: "flex",
-    fontSize: "10px",
-    height: "15px",
-    justifyContent: "center",
-    lineHeight: "10px",
-    width: "15px",
-  },
-  windowContent: {
-    flex: "1",
-    overflow: "auto",
-    padding: "20px",
-  },
-} as const;
+// Touch screens have no reliable double-click, so open on a single tap there
+const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
-interface WindowsProps {
-    icon: ReactElement<{variant?:string}>;
-    title: string;
-    children: ReactNode;
-    width?: number;
-    height?: number;
-    onClose: ()=>void;
+interface DesktopIconProps {
+  id: string;
+  icon: ReactNode;
+  label: string;
+  selected: boolean;
+  dragging: boolean;
+  style: CSSProperties;
+  onOpen: () => void;
+  onContextMenu: (e: MouseEvent) => void;
+  // Selection and dragging are handled by the desktop
+  onPointerDown: (e: PointerEvent<HTMLDivElement>) => void;
+  onPointerMove: (e: PointerEvent<HTMLDivElement>) => void;
+  onPointerUp: (e: PointerEvent<HTMLDivElement>) => void;
 }
 
-const Window = ({icon,title,children,width,height,onClose}:WindowsProps) => {
-    const { minimize } = useModal();
-    return (
-        <SafeModal id={title} icon={icon} title={title} titleBarOptions={[<TitleBar.Minimize style={{marginBlock:"auto"}} key={"minimize"} onClick={()=>minimize(title)}/>, <TitleBar.Close style={{marginBlock:"auto"}} key={"close"} onClick={onClose}/>]}>
-            <Modal.Content width={`${width}px`} height={`${height}px`} boxShadow="$in">
-                {children}
-            </Modal.Content>
-        </SafeModal>
-    )
-}
-
-interface DesktopIconProps { 
-    icon: ReactElement<{variant?:string}>;
-    name: string;
-    children: ReactNode;
-    width?: number;
-    height?: number;
-}
-
-function DesktopIcon({icon,name,children,width,height}:DesktopIconProps) {
-  const {openWindow, closeWindow, isWindowOpen} = useWindows();
-
-  const isOpen = isWindowOpen(name);
-
-  function handleDoubleClick() { openWindow(name); }
-  function handleclose() { closeWindow(name); }
-
+function DesktopIcon({ id, icon, label, selected, dragging, style, onOpen, onContextMenu, onPointerDown, onPointerMove, onPointerUp }: DesktopIconProps) {
   return (
-    <>
-        <div style={styles.desktopIcon} onDoubleClick={handleDoubleClick}>
-            {React.cloneElement(icon,{variant:"32x32_4"})}
-            <p style={styles.iconName}>{name}</p>
-        </div>
-        {
-            isOpen && (
-                // Window component
-                <Window width={width} height={height} title={name} onClose={handleclose} icon={React.cloneElement(icon,{variant:"16x16_4"})}>
-                    {children}
-                </Window>
-            )
-        }
-    </>
+    <div
+      data-icon={id}
+      className={cx(
+        "desktop-icon absolute flex flex-col items-center gap-1.5 w-21 p-1 text-center cursor-default outline-none touch-none",
+        selected && "selected",
+        dragging && "z-10 opacity-80",
+      )}
+      style={style}
+      role="button"
+      tabIndex={0}
+      aria-pressed={selected}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onDoubleClick={isTouch ? undefined : onOpen}
+      onClick={isTouch ? onOpen : undefined}
+      onKeyDown={(e) => { if (e.key === 'Enter') onOpen(); }}
+      onContextMenu={onContextMenu}
+    >
+      <span className={cx("flex", selected && "[filter:sepia(1)_saturate(6)_hue-rotate(190deg)_brightness(0.6)]")}>{icon}</span>
+      <span
+        className={cx(
+          "px-0.5 leading-3.5 break-words max-w-full",
+          selected ? "bg-win-select text-win-select-text outline-1 outline-dotted outline-win-tooltip" : "text-white [text-shadow:1px_1px_1px_rgba(0,0,0,0.7)]",
+        )}
+      >
+        {label}
+      </span>
+    </div>
   )
 }
 
 export default DesktopIcon
-
-//eslint-disable-next-line
-const SafeModal = Modal as unknown as ComponentType<any>;
